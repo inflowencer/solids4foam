@@ -1,0 +1,44 @@
+Bootstrap: localimage
+From: fe41.sif
+
+# %environment
+#      # Point to OMPI binaries, libraries, man pages
+#     export OMPI_DIR=/usr/lib/openmpi-4.1.4
+#     export PATH="$OMPI_DIR/bin:$PATH"
+#     export LD_LIBRARY_PATH="$OMPI_DIR/lib:$LD_LIBRARY_PATH"
+#     export MANPATH="$OMPI_DIR/share/man:$MANPATH"
+#     # For OpenFOAM
+#     export PATH=$OMPI_DIR/bin:$PATH
+#     export LD_LIBRARY_PATH=$OMPI_DIR/lib:$LD_LIBRARY_PATH
+
+%files
+    src/solids4foam-2.1.tar.gz /root/foam
+#     src/ThirdParty-v2212.tgz /usr/lib
+#     src/openmpi-4.1.4.tar.gz /usr/lib
+#     src/pmix-4.2.3.tar.gz /usr/lib
+#     src/hwloc-2.8.0.tar.gz /usr/lib
+#     tests/mpitest.c /opt
+
+%post -c /bin/bash
+    
+    apt install -y wget
+
+    # -------- Copy and extract --------
+    cd /root/foam
+    tar -xf solids4foam-2.1.tar.gz
+    rm solids4foam-2.1.tar.gz
+
+    # -------- Optional fixes --------
+    source foam-extend-5.0/etc/bashrc
+
+    cd solids4foam-2.1
+
+    # cp optionalFixes/foam-extend-4.1/meshObjectBase.H /root/foam/foam-extend-5.0/src/foam/meshes/MeshObject/
+    # cp optionalFixes/foam-extend-4.1/pointBoundaryMesh.C /root/foam/foam-extend-5.0/src/foam/meshes/pointMesh/pointBoundaryMesh/
+    # cp optionalFixes/foam-extend-4.1/GeometricField.C /root/foam/foam-extend-5.0/src/foam/fields/GeometricFields/GeometricField/
+    # wmake libso /root/foam/foam-extend-5.0/src/foam
+    # cp optionalFixes/foam-extend-4.1/EulerDdtScheme.C /root/foam/foam-extend-5.0/src/finiteVolume/finiteVolume/ddtSchemes/EulerDdtScheme/
+    # wmake libso /root/foam/foam-extend-5.0/src/finiteVolume
+
+    # -------- Compile --------
+    ./Allwmake && cd tutorials && ./Alltest

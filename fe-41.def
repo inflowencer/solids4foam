@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%files
+    src/foam-extend-4.1.tar.gz /root
+    src/ThirdParty.zip /root
+
+%post -c /bin/bash
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    # -------- Update & upgrade --------
+    apt-get update && apt-get upgrade -y
+    apt search bison
+
+    # # -------- Requirements --------
+    apt-get install -y build-essential autoconf autotools-dev cmake gawk gnuplot libbison-dev bisonc++
+    apt-get install -y flex libfl-dev libreadline-dev zlib1g-dev openmpi-bin openmpi-common
+    apt-get install -y libgmp-dev libmpfr-dev libmpc-dev mercurial git bzip2 zip unzip wget curl
+    apt-get install -y libfftw3-dev libscotch-dev libptscotch-dev libboost-all-libboost-system-dev dev libcgal-dev bison python-is-python3
+    apt-get install -y git-core build-essential binutils-dev cmake flex zlib1g-dev libncurses5-dev curl bison gnuplot gnuplot-qt gnuplot-data libxt-dev rpm mercurial graphviz python python-dev python3 python3-dev
+
+    # Extract
+    mkdir -p /root/foam
+    cd /root/foam
+    git clone https://git.code.sf.net/p/foam-extend/foam-extend-4.1 foam-extend-4.1
+    cd foam-extend-4.1
+
+    # cd /root
+    # tar -xf foam-extend-4.1.tar.gz
+    # mv foam-extend-4.1 foam
+    # rm -rf foam-extend-4.1.tar.gz
+
+    # cd foam/foam-extend-4.1
+    # mv /root/ThirdParty.zip .
+    # unzip ThirdParty.zip
+    # rm ThirdParty.zip
+
+    source etc/bashrc
+
+    ./Allwmake.firstInstall -j | tee log.compile
