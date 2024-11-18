@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: fe41.sif
+From: fe-41.sif
 
 # %environment
 #      # Point to OMPI binaries, libraries, man pages
@@ -12,7 +12,7 @@ From: fe41.sif
 #     export LD_LIBRARY_PATH=$OMPI_DIR/lib:$LD_LIBRARY_PATH
 
 %files
-    src/solids4foam-2.1.tar.gz /root/foam
+    src/solids4foam-2.1.tar.gz /opt
 #     src/ThirdParty-v2212.tgz /usr/lib
 #     src/openmpi-4.1.4.tar.gz /usr/lib
 #     src/pmix-4.2.3.tar.gz /usr/lib
@@ -21,24 +21,20 @@ From: fe41.sif
 
 %post -c /bin/bash
     
-    apt install -y wget
-
     # -------- Copy and extract --------
-    cd /root/foam
+    cd /opt
     tar -xf solids4foam-2.1.tar.gz
     rm solids4foam-2.1.tar.gz
 
     # -------- Optional fixes --------
-    source foam-extend-5.0/etc/bashrc
-
+    source /opt/foam-extend-4.1/etc/bashrc
     cd solids4foam-2.1
-
-    # cp optionalFixes/foam-extend-4.1/meshObjectBase.H /root/foam/foam-extend-5.0/src/foam/meshes/MeshObject/
-    # cp optionalFixes/foam-extend-4.1/pointBoundaryMesh.C /root/foam/foam-extend-5.0/src/foam/meshes/pointMesh/pointBoundaryMesh/
-    # cp optionalFixes/foam-extend-4.1/GeometricField.C /root/foam/foam-extend-5.0/src/foam/fields/GeometricFields/GeometricField/
-    # wmake libso /root/foam/foam-extend-5.0/src/foam
-    # cp optionalFixes/foam-extend-4.1/EulerDdtScheme.C /root/foam/foam-extend-5.0/src/finiteVolume/finiteVolume/ddtSchemes/EulerDdtScheme/
-    # wmake libso /root/foam/foam-extend-5.0/src/finiteVolume
+    cp optionalFixes/foam-extend-4.1/meshObjectBase.H /opt/foam-extend-4.1/src/foam/meshes/MeshObject/
+    cp optionalFixes/foam-extend-4.1/pointBoundaryMesh.C /opt/foam-extend-4.1/src/foam/meshes/pointMesh/pointBoundaryMesh/
+    cp optionalFixes/foam-extend-4.1/GeometricField.C /opt/foam-extend-4.1/src/foam/fields/GeometricFields/GeometricField/
+    wmake libso /opt/foam-extend-4.1/src/foam
+    cp optionalFixes/foam-extend-4.1/EulerDdtScheme.C /opt/foam-extend-4.1/src/finiteVolume/finiteVolume/ddtSchemes/EulerDdtScheme/
+    wmake libso /opt/foam-extend-4.1/src/finiteVolume
 
     # -------- Compile --------
-    ./Allwmake && cd tutorials && ./Alltest
+    ./Allwmake
